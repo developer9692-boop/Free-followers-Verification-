@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>ꜰʀᴇᴇ ꜰᴏʟʟᴏᴡᴇʀꜱ — ᴠᴇʀɪꜰʏ</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0d0d0f;
+    --bg2:     #141418;
+    --bg3:     #1c1c22;
+    --border:  #2a2a35;
+    --accent:  #7c5cfc;
+    --accent2: #5e42e0;
+    --green:   #22c55e;
+    --red:     #ef4444;
+    --text:    #e8e8f0;
+    --muted:   #7a7a95;
+    --glow:    rgba(124,92,252,0.18);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont,
+                 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 28px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .glow {
+    position: absolute;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: var(--glow);
+    filter: blur(60px);
+    top: -60px; right: -60px;
+    pointer-events: none;
+  }
+
+  .logo-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+
+  .logo {
+    width: 72px; height: 72px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 0 28px var(--glow);
+    position: relative;
+    z-index: 1;
+  }
+
+  .title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #fff;
+    margin-bottom: 8px;
+    font-variant: small-caps;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    letter-spacing: 0.03em;
+    line-height: 1.6;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-variant: small-caps;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(124,92,252,0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary:hover:not(:disabled)  { box-shadow: 0 6px 28px rgba(124,92,252,0.5); }
+  .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+  .status-box {
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    margin-top: 18px;
+    display: none;
+    text-align: left;
+  }
+  .status-box.show { display: block; }
+  .status-box.error {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #fca5a5;
+  }
+
+  .spinner-wrap {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0;
+  }
+  .spinner-wrap.show { display: flex; }
+
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .spinner-text {
+    font-size: 13px;
+    color: var(--muted);
+    font-variant: small-caps;
+    letter-spacing: 0.06em;
+  }
+
+  .success-screen { display: none; }
+  .success-screen.show { display: block; }
+
+  .success-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+    animation: pop 0.4s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes pop {
+    0%   { transform: scale(0.4); opacity: 0; }
+    70%  { transform: scale(1.1); }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+
+  .success-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green);
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  .success-sub {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .note {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 22px;
+    line-height: 1.5;
+    font-variant: small-caps;
+    letter-spacing: 0.03em;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+<div class="card">
+  <div class="glow"></div>
+
+  <!-- ── MAIN SCREEN ── -->
+  <div id="screen-main">
+    <div class="logo-wrap"><div class="logo">👥</div></div>
+    <div class="title">ꜰʀᴇᴇ ꜰᴏʟʟᴏᴡᴇʀꜱ</div>
+    <div class="subtitle">ᴛᴀᴘ ʙᴇʟᴏᴡ ᴛᴏ ᴠᴇʀɪꜰʏ ʏᴏᴜʀ ᴅᴇᴠɪᴄᴇ ᴀɴᴅ ᴜɴʟᴏᴄᴋ ᴛʜᴇ ʙᴏᴛ</div>
+
+    <div class="spinner-wrap" id="spinner">
+      <div class="spinner"></div>
+      <div class="spinner-text">ᴠᴇʀɪꜰʏɪɴɢ ʏᴏᴜʀ ᴅᴇᴠɪᴄᴇ...</div>
+    </div>
+
+    <button class="btn-primary" id="btn-verify" onclick="doVerify()">
+      ✅ ᴠᴇʀɪꜰʏ ᴍᴇ
+    </button>
+
+    <div class="status-box error" id="status-error"></div>
+
+    <p class="note">
+      ᴏɴᴇ ᴅᴇᴠɪᴄᴇ = ᴏɴᴇ ᴀᴄᴄᴏᴜɴᴛ
+    </p>
+  </div>
+
+  <!-- ── SUCCESS SCREEN ── -->
+  <div class="success-screen" id="screen-success">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">ᴠᴇʀɪꜰɪᴇᴅ</div>
+    <div class="success-sub">
+      ʀᴇᴅɪʀᴇᴄᴛɪɴɢ ʏᴏᴜ ʙᴀᴄᴋ ᴛᴏ ᴛʜᴇ ʙᴏᴛ...
+    </div>
+  </div>
+
+</div><!-- /card -->
+</div><!-- /app -->
+
+<script>
+// ── Telegram Web App init ─────────────────────────────────────────
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.expand();
+  tg.ready();
+}
+
+// Get user ID from URL param (passed by bot) or from tg init data
+function getUserId() {
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = params.get("uid");
+  if (fromUrl) return parseInt(fromUrl, 10);
+  try {
+    return tg?.initDataUnsafe?.user?.id || null;
+  } catch { return null; }
+}
+const USER_ID = getUserId();
+
+// ── Device fingerprint ────────────────────────────────────────────
+async function getFingerprint() {
+  const parts = [];
+
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width  = 200;
+    canvas.height = 40;
+    const ctx = canvas.getContext("2d");
+    ctx.textBaseline = "top";
+    ctx.font = "14px Arial";
+    ctx.fillStyle = "#7c5cfc";
+    ctx.fillText("FreeFollowersBot🎯", 2, 2);
+    ctx.fillStyle = "#22c55e";
+    ctx.fillRect(100, 5, 80, 25);
+    parts.push(canvas.toDataURL());
+  } catch {}
+
+  parts.push(`${screen.width}x${screen.height}x${screen.colorDepth}`);
+  parts.push(`dpr:${devicePixelRatio}`);
+  parts.push(navigator.platform || "");
+  parts.push(navigator.language || "");
+
+  try {
+    parts.push(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  } catch {}
+
+  parts.push(`cores:${navigator.hardwareConcurrency || 0}`);
+  parts.push(`mem:${navigator.deviceMemory || 0}`);
+
+  try {
+    const gl = document.createElement("canvas").getContext("webgl");
+    const dbg = gl?.getExtension("WEBGL_debug_renderer_info");
+    if (dbg) {
+      parts.push(gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
+      parts.push(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
+    }
+  } catch {}
+
+  const raw = parts.join("|");
+  try {
+    const buf  = new TextEncoder().encode(raw);
+    const hash = await crypto.subtle.digest("SHA-256", buf);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  } catch {
+    let h = 0;
+    for (const c of raw) h = ((h << 5) - h) + c.charCodeAt(0) | 0;
+    return Math.abs(h).toString(16) + raw.length.toString(16);
+  }
+}
+
+// ── UI helpers ──────────────────────────────────────────────────────
+function setStatus(text) {
+  const el = document.getElementById("status-error");
+  if (text) {
+    el.textContent = text;
+    el.classList.add("show");
+  } else {
+    el.classList.remove("show");
+  }
+}
+
+function setSpinner(show) {
+  document.getElementById("spinner").classList.toggle("show", show);
+  document.getElementById("btn-verify").style.display = show ? "none" : "block";
+}
+
+function showSuccess() {
+  document.getElementById("screen-main").style.display = "none";
+  document.getElementById("screen-success").classList.add("show");
+}
+
+function closeApp() {
+  if (tg) tg.close();
+}
+
+// ── Main verify flow ────────────────────────────────────────────────
+// Sends the fingerprint to the bot via Telegram.WebApp.sendData() —
+// no server or URL involved. The bot receives it as a normal message
+// (web_app_data), enforces one-device-one-account itself, and replies
+// with the dashboard (or a block/join message) directly in chat.
+async function doVerify() {
+  setStatus(null);
+
+  if (!USER_ID) {
+    setStatus("ᴄᴏᴜʟᴅ ɴᴏᴛ ɪᴅᴇɴᴛɪꜰʏ ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ. ᴏᴘᴇɴ ꜰʀᴏᴍ ᴛᴇʟᴇɢʀᴀᴍ.");
+    return;
+  }
+
+  if (!tg || typeof tg.sendData !== "function") {
+    setStatus("ᴏᴘᴇɴ ᴛʜɪꜱ ꜰʀᴏᴍ ᴛʜᴇ ᴠᴇʀɪꜰʏ ʙᴜᴛᴛᴏɴ ɪɴ ᴛᴇʟᴇɢʀᴀᴍ.");
+    return;
+  }
+
+  setSpinner(true);
+
+  let fp;
+  try {
+    fp = await getFingerprint();
+  } catch (e) {
+    setSpinner(false);
+    setStatus("ꜰɪɴɢᴇʀᴘʀɪɴᴛ ᴇʀʀᴏʀ: " + e.message);
+    return;
+  }
+
+  setSpinner(false);
+  showSuccess();
+
+  try {
+    tg.sendData(JSON.stringify({ fp }));
+  } catch (e) {
+    setStatus("ᴄᴏᴜʟᴅ ɴᴏᴛ ꜱᴇɴᴅ ᴅᴀᴛᴀ. ᴛʀʏ ᴀɢᴀɪɴ.");
+    return;
+  }
+
+  if (tg) tg.HapticFeedback?.notificationOccurred("success");
+  // sendData closes the Mini App on its own in most clients; this is
+  // just a safety net in case a client doesn't auto-close.
+  setTimeout(closeApp, 900);
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+(function init() {
+  if (tg?.colorScheme === "light") {
+    document.documentElement.style.setProperty("--bg",    "#f5f5fa");
+    document.documentElement.style.setProperty("--bg2",   "#ffffff");
+    document.documentElement.style.setProperty("--bg3",   "#ededf5");
+    document.documentElement.style.setProperty("--border","#dddde8");
+    document.documentElement.style.setProperty("--text",  "#111122");
+    document.documentElement.style.setProperty("--muted", "#666680");
+  }
+})();
+</script>
+</body>
+</html>
