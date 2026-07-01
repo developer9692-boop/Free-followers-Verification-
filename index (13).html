@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>ꜰʀᴇᴇ ꜰᴏʟʟᴏᴡᴇʀꜱ — ᴠᴇʀɪꜰʏ</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0d0d0f;
+    --bg2:      #141418;
+    --bg3:      #1c1c22;
+    --border:   #2a2a35;
+    --accent:   #7c5cfc;
+    --accent2:  #5e42e0;
+    --green:    #22c55e;
+    --red:      #ef4444;
+    --yellow:   #f59e0b;
+    --text:     #e8e8f0;
+    --muted:    #7a7a95;
+    --glow:     rgba(124,92,252,0.18);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont,
+                 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ── Layout ── */
+  .app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  /* ── Glow blob ── */
+  .glow {
+    position: absolute;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: var(--glow);
+    filter: blur(60px);
+    top: -60px; right: -60px;
+    pointer-events: none;
+  }
+
+  /* ── Logo / icon ── */
+  .logo-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .logo {
+    width: 72px; height: 72px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 0 28px var(--glow);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Typography ── */
+  .title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 6px;
+    font-variant: small-caps;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 28px;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Divider ── */
+  .div {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 20px 0;
+  }
+
+  /* ── Channel list ── */
+  .channel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .channel-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, background 0.2s;
+    gap: 12px;
+  }
+
+  .channel-item:hover {
+    border-color: var(--accent);
+    background: rgba(124,92,252,0.06);
+  }
+
+  .channel-item.joined {
+    border-color: var(--green);
+    background: rgba(34,197,94,0.06);
+  }
+
+  .channel-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .channel-num {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-variant: small-caps;
+  }
+
+  .channel-item.joined .channel-num {
+    background: var(--green);
+  }
+
+  .channel-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.02em;
+  }
+
+  .channel-badge {
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 2px 8px;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+    font-variant: small-caps;
+  }
+
+  .badge-join {
+    background: rgba(124,92,252,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(124,92,252,0.3);
+  }
+
+  .badge-done {
+    background: rgba(34,197,94,0.12);
+    color: var(--green);
+    border: 1px solid rgba(34,197,94,0.3);
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    margin-bottom: 24px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+  }
+
+  .progress-bar {
+    height: 6px;
+    border-radius: 99px;
+    background: var(--bg3);
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  /* ── Info cards ── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .info-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+
+  .info-card .val {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+
+  .info-card .lbl {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Primary button ── */
+  .btn-primary {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-variant: small-caps;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(124,92,252,0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 6px 28px rgba(124,92,252,0.5);
+  }
+
+  .btn-primary:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .btn-primary.success {
+    background: linear-gradient(135deg, #16a34a, var(--green));
+    box-shadow: 0 4px 20px rgba(34,197,94,0.35);
+  }
+
+  .btn-primary.danger {
+    background: linear-gradient(135deg, #b91c1c, var(--red));
+    box-shadow: 0 4px 20px rgba(239,68,68,0.35);
+  }
+
+  /* Shimmer on button */
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+      transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+    transform: translateX(-100%);
+  }
+  .btn-primary:not(:disabled):hover::after {
+    animation: shimmer 0.6s ease;
+  }
+  @keyframes shimmer {
+    to { transform: translateX(100%); }
+  }
+
+  /* ── Status messages ── */
+  .status-box {
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .status-box.show { display: block; }
+
+  .status-box.info {
+    background: rgba(124,92,252,0.1);
+    border: 1px solid rgba(124,92,252,0.3);
+    color: #c4b5fd;
+  }
+
+  .status-box.success {
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: #86efac;
+  }
+
+  .status-box.error {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #fca5a5;
+  }
+
+  .status-box.warn {
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.3);
+    color: #fcd34d;
+  }
+
+  /* ── Spinner ── */
+  .spinner-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 0;
+    display: none;
+  }
+
+  .spinner-wrap.show { display: flex; }
+
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .spinner-text {
+    font-size: 13px;
+    color: var(--muted);
+    font-variant: small-caps;
+    letter-spacing: 0.06em;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Success screen ── */
+  .success-screen {
+    text-align: center;
+    padding: 8px 0;
+    display: none;
+  }
+
+  .success-screen.show { display: block; }
+
+  .success-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+    animation: pop 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  @keyframes pop {
+    0%   { transform: scale(0.4); opacity: 0; }
+    70%  { transform: scale(1.1); }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+
+  .success-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green);
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  .success-sub {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  /* ── Device warning ── */
+  .device-warn {
+    text-align: center;
+    padding: 8px 0;
+    display: none;
+  }
+
+  .device-warn.show { display: block; }
+
+  .warn-icon { font-size: 52px; margin-bottom: 16px; }
+
+  .warn-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--red);
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+
+  .warn-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── Footer note ── */
+  .note {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.5;
+    font-variant: small-caps;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Pulse dot ── */
+  .pulse {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(34,197,94,0.6);
+    animation: pulse 1.4s infinite;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+    70%  { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+    100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+<div class="card">
+  <div class="glow"></div>
+
+  <!-- ── MAIN VERIFY SCREEN ── -->
+  <div id="screen-main">
+
+    <div class="logo-wrap">
+      <div class="logo">👥</div>
+    </div>
+
+    <div class="title">ꜰʀᴇᴇ ꜰᴏʟʟᴏᴡᴇʀꜱ</div>
+    <div class="subtitle">ᴊᴏɪɴ ᴀʟʟ ᴄʜᴀɴɴᴇʟꜱ ᴛᴏ ᴜɴʟᴏᴄᴋ ᴛʜᴇ ʙᴏᴛ</div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>ᴄʜᴀɴɴᴇʟꜱ ᴊᴏɪɴᴇᴅ</span>
+        <span id="prog-count">0 / 4</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="prog-fill"></div>
+      </div>
+    </div>
+
+    <div class="channel-list" id="channel-list">
+      <!-- injected by JS -->
+    </div>
+
+    <div class="div"></div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="val">100</div>
+        <div class="lbl">ꜰʀᴇᴇ ꜰᴏʟʟᴏᴡᴇʀꜱ</div>
+      </div>
+      <div class="info-card">
+        <div class="val">1/ᴅᴀʏ</div>
+        <div class="lbl">ᴅᴀɪʟʏ ᴄʟᴀɪᴍ</div>
+      </div>
+    </div>
+
+    <div class="status-box info show" id="status-checking">
+      <span class="pulse"></span>
+      ᴄʜᴇᴄᴋɪɴɢ ᴄʜᴀɴɴᴇʟ ᴍᴇᴍʙᴇʀꜱʜɪᴘ...
+    </div>
+
+    <div class="status-box warn" id="status-warn">
+      ᴘʟᴇᴀꜱᴇ ᴊᴏɪɴ ᴀʟʟ 4 ᴄʜᴀɴɴᴇʟꜱ ꜰɪʀꜱᴛ, ᴛʜᴇɴ ᴛᴀᴘ ᴠᴇʀɪꜰʏ.
+    </div>
+
+    <div class="status-box error" id="status-error"></div>
+
+    <div class="spinner-wrap" id="spinner">
+      <div class="spinner"></div>
+      <div class="spinner-text">ᴠᴇʀɪꜰʏɪɴɢ ʏᴏᴜʀ ᴅᴇᴠɪᴄᴇ...</div>
+    </div>
+
+    <button class="btn-primary" id="btn-verify" disabled onclick="doVerify()">
+      ᴠᴇʀɪꜰʏ & ᴜɴʟᴏᴄᴋ
+    </button>
+
+    <p class="note">
+      ᴏɴᴇ ᴅᴇᴠɪᴄᴇ = ᴏɴᴇ ᴀᴄᴄᴏᴜɴᴛ<br>
+      ᴛʜɪꜱ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ɪꜱ ᴘᴇʀᴍᴀɴᴇɴᴛ
+    </p>
+  </div>
+
+  <!-- ── SUCCESS SCREEN ── -->
+  <div class="success-screen" id="screen-success">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">ᴀᴄᴄᴇꜱꜱ ɢʀᴀɴᴛᴇᴅ</div>
+    <div class="success-sub">
+      ʏᴏᴜʀ ᴅᴇᴠɪᴄᴇ ʜᴀꜱ ʙᴇᴇɴ ᴠᴇʀɪꜰɪᴇᴅ.<br>
+      ɢᴏ ʙᴀᴄᴋ ᴛᴏ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʟᴀɪᴍ ʏᴏᴜʀ ꜰʀᴇᴇ ꜰᴏʟʟᴏᴡᴇʀꜱ.
+    </div>
+    <button class="btn-primary success" onclick="closeApp()">
+      ᴏᴘᴇɴ ʙᴏᴛ
+    </button>
+  </div>
+
+  <!-- ── ALREADY VERIFIED SCREEN ── -->
+  <div class="success-screen" id="screen-already">
+    <div class="success-icon">✅</div>
+    <div class="success-title">ᴀʟʀᴇᴀᴅʏ ᴠᴇʀɪꜰɪᴇᴅ</div>
+    <div class="success-sub">
+      ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ɪꜱ ᴀᴄᴛɪᴠᴇ.<br>
+      ɢᴏ ʙᴀᴄᴋ ᴛᴏ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʟᴀɪᴍ ꜰᴏʟʟᴏᴡᴇʀꜱ.
+    </div>
+    <button class="btn-primary success" onclick="closeApp()">
+      ᴏᴘᴇɴ ʙᴏᴛ
+    </button>
+  </div>
+
+  <!-- ── DEVICE BLOCKED SCREEN ── -->
+  <div class="device-warn" id="screen-blocked">
+    <div class="warn-icon">🔒</div>
+    <div class="warn-title">ᴅᴇᴠɪᴄᴇ ᴀʟʀᴇᴀᴅʏ ᴜꜱᴇᴅ</div>
+    <div class="warn-desc">
+      ᴛʜɪꜱ ᴅᴇᴠɪᴄᴇ ɪꜱ ʟɪɴᴋᴇᴅ ᴛᴏ ᴀɴᴏᴛʜᴇʀ ᴛᴇʟᴇɢʀᴀᴍ ᴀᴄᴄᴏᴜɴᴛ.<br><br>
+      ᴇᴀᴄʜ ᴅᴇᴠɪᴄᴇ ᴄᴀɴ ᴏɴʟʏ ʙᴇ ᴜꜱᴇᴅ ᴡɪᴛʜ ᴏɴᴇ ᴀᴄᴄᴏᴜɴᴛ.<br>
+      ᴍᴜʟᴛɪᴘʟᴇ ᴀᴄᴄᴏᴜɴᴛꜱ ᴀʀᴇ ɴᴏᴛ ᴀʟʟᴏᴡᴇᴅ.
+    </div>
+  </div>
+
+  <!-- ── NOT JOINED SCREEN ── -->
+  <div class="device-warn" id="screen-notjoined">
+    <div class="warn-icon">📢</div>
+    <div class="warn-title">ᴊᴏɪɴ ᴀʟʟ ᴄʜᴀɴɴᴇʟꜱ</div>
+    <div class="warn-desc">
+      ʏᴏᴜ ʜᴀᴠᴇɴ'ᴛ ᴊᴏɪɴᴇᴅ ᴀʟʟ ᴄʜᴀɴɴᴇʟꜱ ʏᴇᴛ.<br><br>
+      ᴛᴀᴘ ᴇᴀᴄʜ ᴄʜᴀɴɴᴇʟ ʟɪɴᴋ ᴀʙᴏᴠᴇ, ᴊᴏɪɴ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ.
+    </div>
+  </div>
+
+</div><!-- /card -->
+</div><!-- /app -->
+
+<script>
+// ── CONFIG — must match bot's FORCE_CHANNELS ──────────────────────
+const CHANNELS = [
+  { name: "ᴄʜᴀɴɴᴇʟ ᴏɴᴇ",   username: "CHANNEL_ONE"   },
+  { name: "ᴄʜᴀɴɴᴇʟ ᴛᴡᴏ",   username: "CHANNEL_TWO"   },
+  { name: "ᴄʜᴀɴɴᴇʟ ᴛʜʀᴇᴇ", username: "CHANNEL_THREE" },
+  { name: "ᴄʜᴀɴɴᴇʟ ꜰᴏᴜʀ",  username: "CHANNEL_FOUR"  },
+];
+
+// No server involved — device verification is fully local (see LOCAL DEVICE
+// LOCK section near the bottom of this script).
+
+// ── Telegram Web App init ─────────────────────────────────────────
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.expand();
+  tg.ready();
+}
+
+// Get user ID from URL param (passed by bot) or from tg init data
+function getUserId() {
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = params.get("uid");
+  if (fromUrl) return parseInt(fromUrl, 10);
+  // Fallback: parse from Telegram initDataUnsafe
+  try {
+    return tg?.initDataUnsafe?.user?.id || null;
+  } catch { return null; }
+}
+
+const USER_ID = getUserId();
+
+// ── Build channel list UI ─────────────────────────────────────────
+const listEl = document.getElementById("channel-list");
+CHANNELS.forEach((ch, i) => {
+  const a = document.createElement("a");
+  a.href   = `https://t.me/${ch.username}`;
+  a.target = "_blank";
+  a.rel    = "noopener";
+  a.className = "channel-item";
+  a.dataset.idx = i;
+  a.innerHTML = `
+    <div class="channel-left">
+      <div class="channel-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="channel-name">${ch.name}</div>
+    </div>
+    <span class="channel-badge badge-join" id="badge-${i}">ᴊᴏɪɴ</span>
+  `;
+  a.addEventListener("click", () => {
+    // After a delay, re-check membership
+    setTimeout(checkMemberships, 3000);
+  });
+  listEl.appendChild(a);
+});
+
+// ── Device fingerprint ────────────────────────────────────────────
+async function getFingerprint() {
+  const parts = [];
+
+  // Canvas fingerprint
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width  = 200;
+    canvas.height = 40;
+    const ctx = canvas.getContext("2d");
+    ctx.textBaseline = "top";
+    ctx.font = "14px Arial";
+    ctx.fillStyle = "#7c5cfc";
+    ctx.fillText("FreeFollowersBot🎯", 2, 2);
+    ctx.fillStyle = "#22c55e";
+    ctx.fillRect(100, 5, 80, 25);
+    parts.push(canvas.toDataURL());
+  } catch {}
+
+  // Screen
+  parts.push(`${screen.width}x${screen.height}x${screen.colorDepth}`);
+  parts.push(`dpr:${devicePixelRatio}`);
+
+  // Platform & UA
+  parts.push(navigator.platform || "");
+  parts.push(navigator.language || "");
+
+  // Timezone
+  try {
+    parts.push(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  } catch {}
+
+  // Hardware
+  parts.push(`cores:${navigator.hardwareConcurrency || 0}`);
+  parts.push(`mem:${navigator.deviceMemory || 0}`);
+
+  // WebGL renderer
+  try {
+    const gl = document.createElement("canvas").getContext("webgl");
+    const dbg = gl?.getExtension("WEBGL_debug_renderer_info");
+    if (dbg) {
+      parts.push(gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
+      parts.push(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
+    }
+  } catch {}
+
+  // Join and hash with SubtleCrypto
+  const raw = parts.join("|");
+  try {
+    const buf  = new TextEncoder().encode(raw);
+    const hash = await crypto.subtle.digest("SHA-256", buf);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  } catch {
+    // Fallback: simple hash
+    let h = 0;
+    for (const c of raw) h = ((h << 5) - h) + c.charCodeAt(0) | 0;
+    return Math.abs(h).toString(16) + raw.length.toString(16);
+  }
+}
+
+// ── LOCAL DEVICE LOCK (no server) ───────────────────────────────────
+// Enforces "one device = one account" entirely in the browser.
+// The first Telegram account to verify on this device "claims" it by
+// writing its user id next to the device fingerprint into three
+// independent local stores (localStorage, IndexedDB, a long-lived
+// cookie). Any other account opening the app on the same browser will
+// find that record and get blocked. This is best-effort only — a user
+// who clears all site data, uses a different browser, or opens a
+// private/incognito window can still get around it, because there is
+// no server keeping a record. If you need this to be unbeatable, the
+// bot's own server-side device_lock table (already in followersboost.py)
+// is the only real way — this script deliberately avoids calling it.
+
+const LOCK_KEY = "ffb_device_lock_v1";
+
+function readCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+function writeCookie(name, value) {
+  const oneYear = 60 * 60 * 24 * 365;
+  document.cookie = `${name}=${encodeURIComponent(value)};max-age=${oneYear};path=/;SameSite=Lax`;
+}
+
+function idbGet(key) {
+  return new Promise((resolve) => {
+    try {
+      const req = indexedDB.open("ffb_store", 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("kv");
+      req.onerror = () => resolve(null);
+      req.onsuccess = () => {
+        const db = req.result;
+        try {
+          const tx = db.transaction("kv", "readonly");
+          const getReq = tx.objectStore("kv").get(key);
+          getReq.onsuccess = () => resolve(getReq.result || null);
+          getReq.onerror = () => resolve(null);
+        } catch { resolve(null); }
+      };
+    } catch { resolve(null); }
+  });
+}
+
+function idbSet(key, value) {
+  return new Promise((resolve) => {
+    try {
+      const req = indexedDB.open("ffb_store", 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("kv");
+      req.onerror = () => resolve(false);
+      req.onsuccess = () => {
+        const db = req.result;
+        try {
+          const tx = db.transaction("kv", "readwrite");
+          tx.objectStore("kv").put(value, key);
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => resolve(false);
+        } catch { resolve(false); }
+      };
+    } catch { resolve(false); }
+  });
+}
+
+// Read the lock record from whichever storage layer still has it.
+async function readDeviceLock() {
+  const fromLs = localStorage.getItem(LOCK_KEY);
+  if (fromLs) { try { return JSON.parse(fromLs); } catch {} }
+
+  const fromCookie = readCookie(LOCK_KEY);
+  if (fromCookie) { try { return JSON.parse(fromCookie); } catch {} }
+
+  const fromIdb = await idbGet(LOCK_KEY);
+  if (fromIdb) { try { return JSON.parse(fromIdb); } catch {} }
+
+  return null;
+}
+
+// Write the lock record to all three storage layers so clearing one
+// alone doesn't erase the lock.
+async function writeDeviceLock(record) {
+  const raw = JSON.stringify(record);
+  try { localStorage.setItem(LOCK_KEY, raw); } catch {}
+  try { writeCookie(LOCK_KEY, raw); } catch {}
+  try { await idbSet(LOCK_KEY, raw); } catch {}
+}
+
+// Decide the verification outcome purely from local storage.
+// Returns one of: "verified" | "already_verified" | "device_taken"
+async function checkDeviceLock(fingerprint, userId) {
+  const existing = await readDeviceLock();
+
+  if (!existing) {
+    // First account to verify on this device — claim it.
+    await writeDeviceLock({ uid: userId, fp: fingerprint, at: Date.now() });
+    return "verified";
+  }
+
+  if (existing.uid === userId) {
+    // Same account re-opening the app — refresh the record and pass.
+    await writeDeviceLock({ uid: userId, fp: fingerprint, at: existing.at || Date.now() });
+    return "already_verified";
+  }
+
+  // A different account already claimed this device.
+  return "device_taken";
+}
+
+// ── Membership check via bot API ──────────────────────────────────
+// NOTE: Real membership check happens server-side in the bot.
+// The frontend just guides the user visually; the bot verifies.
+// We track which channels user has visited (clicked).
+const visited = new Set(JSON.parse(localStorage.getItem("visited_ch") || "[]"));
+
+function savVisited() {
+  localStorage.setItem("visited_ch", JSON.stringify([...visited]));
+}
+
+function updateUI() {
+  const joined = visited.size;
+  document.getElementById("prog-count").textContent = `${joined} / ${CHANNELS.length}`;
+  document.getElementById("prog-fill").style.width  = `${(joined / CHANNELS.length) * 100}%`;
+
+  CHANNELS.forEach((_, i) => {
+    const item  = listEl.children[i];
+    const badge = document.getElementById(`badge-${i}`);
+    if (visited.has(i)) {
+      item.classList.add("joined");
+      badge.className     = "channel-badge badge-done";
+      badge.textContent   = "ᴅᴏɴᴇ";
+    }
+  });
+
+  const btn = document.getElementById("btn-verify");
+  const statusCheck = document.getElementById("status-checking");
+  const statusWarn  = document.getElementById("status-warn");
+
+  statusCheck.classList.remove("show");
+
+  if (joined >= CHANNELS.length) {
+    btn.disabled = false;
+    statusWarn.classList.remove("show");
+  } else {
+    btn.disabled = true;
+    statusWarn.classList.add("show");
+  }
+}
+
+function checkMemberships() {
+  // Mark all channels as "visited" once user clicks any link
+  // Real enforcement is server-side
+  CHANNELS.forEach((_, i) => visited.add(i));
+  savVisited();
+  updateUI();
+}
+
+// Re-check when app is focused (user switches back from Telegram)
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    setTimeout(checkMemberships, 800);
+  }
+});
+
+// ── Screen control ────────────────────────────────────────────────
+function showScreen(id) {
+  ["screen-main","screen-success","screen-already","screen-blocked","screen-notjoined"]
+    .forEach(s => {
+      const el = document.getElementById(s);
+      if (el) {
+        el.style.display  = "none";
+        el.classList.remove("show");
+      }
+    });
+  const target = document.getElementById(id);
+  if (target) {
+    target.style.display = "block";
+    target.classList.add("show");
+    if (target.tagName !== "DIV") return;
+  }
+}
+
+function setStatus(type, text) {
+  ["status-checking","status-warn","status-error"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("show");
+  });
+  if (type && text) {
+    const el = document.getElementById("status-error");
+    el.className = `status-box ${type} show`;
+    el.textContent = text;
+  }
+}
+
+function setSpinner(show) {
+  document.getElementById("spinner").classList.toggle("show", show);
+  document.getElementById("btn-verify").style.display = show ? "none" : "block";
+}
+
+function closeApp() {
+  if (tg) tg.close();
+}
+
+// ── Main verify flow (fully local, no server call) ─────────────────
+async function doVerify() {
+  if (!USER_ID) {
+    setStatus("error", "ᴄᴏᴜʟᴅ ɴᴏᴛ ɪᴅᴇɴᴛɪꜰʏ ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ. ᴏᴘᴇɴ ꜰʀᴏᴍ ᴛᴇʟᴇɢʀᴀᴍ.");
+    return;
+  }
+
+  if (visited.size < CHANNELS.length) {
+    showScreen("screen-notjoined");
+    if (tg) tg.HapticFeedback?.notificationOccurred("warning");
+    return;
+  }
+
+  setSpinner(true);
+
+  let fp;
+  try {
+    fp = await getFingerprint();
+  } catch (e) {
+    setSpinner(false);
+    setStatus("error", "ꜰɪɴɢᴇʀᴘʀɪɴᴛ ᴇʀʀᴏʀ: " + e.message);
+    return;
+  }
+
+  let status;
+  try {
+    status = await checkDeviceLock(fp, USER_ID);
+  } catch (e) {
+    setSpinner(false);
+    setStatus("error", "ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴇʀʀᴏʀ. ᴘʟᴇᴀꜱᴇ ᴛʀʏ ᴀɢᴀɪɴ.");
+    return;
+  }
+
+  setSpinner(false);
+
+  if (status === "verified") {
+    showScreen("screen-success");
+    if (tg) tg.HapticFeedback?.notificationOccurred("success");
+    setTimeout(closeApp, 3500);
+    return;
+  }
+
+  if (status === "already_verified") {
+    showScreen("screen-already");
+    if (tg) tg.HapticFeedback?.notificationOccurred("success");
+    setTimeout(closeApp, 3000);
+    return;
+  }
+
+  if (status === "device_taken") {
+    showScreen("screen-blocked");
+    if (tg) tg.HapticFeedback?.notificationOccurred("error");
+    return;
+  }
+
+  setStatus("error", "ᴜɴᴋɴᴏᴡɴ ᴇʀʀᴏʀ. ᴛʀʏ ᴀɢᴀɪɴ.");
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+(function init() {
+  // If user has visited channels before, restore state
+  if (visited.size > 0) updateUI();
+  else document.getElementById("status-checking").classList.remove("show");
+
+  // Apply Telegram theme colors if available
+  if (tg?.colorScheme === "light") {
+    document.documentElement.style.setProperty("--bg",    "#f5f5fa");
+    document.documentElement.style.setProperty("--bg2",   "#ffffff");
+    document.documentElement.style.setProperty("--bg3",   "#ededf5");
+    document.documentElement.style.setProperty("--border","#dddde8");
+    document.documentElement.style.setProperty("--text",  "#111122");
+    document.documentElement.style.setProperty("--muted", "#666680");
+  }
+
+  // Auto-check after 1 second
+  setTimeout(updateUI, 1000);
+})();
+</script>
+</body>
+</html>
